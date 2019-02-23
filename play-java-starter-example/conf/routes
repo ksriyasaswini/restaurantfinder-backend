@@ -15,20 +15,23 @@ POST /greetings          controllers.HelloWorldController.greetings()
 GET /me                  controllers.HelloWorldController.me()
 
 
-POST /login              controllers.UserController.createUserDetails()
+POST /register              controllers.UserController.createUserDetails()
+PUT /signIn               controllers.UserController.signInUser(username: String, password: String)
+PUT /signOut              controllers.UserController.signOutUser(token: String)
 #DELETE  /login/:id          controllers.UserController.deleteValuesById(id: Integer)
 #GET  /login              controllers.UserController.getAllValues()
 #GET  /login/:id          controllers.UserController.getValuesById(id: Integer)
 
 
-#POST /images             controllers.ImagesController.uploadImage()
-#GET /images/:id          controllers.ImagesController.downloadImage(id: String)
-#DELETE /images/:id       controllers.ImagesController.deleteImage(id: String)
+
+POST /images             controllers.ImagesController.uploadImage()
+GET  /images         controllers.ImagesController.downloadImage(id: String)
+DELETE /images/:id       controllers.ImagesController.deleteImage(id: String)
 
 
 POST /details             controllers.RestaurantController.createRestaurant()
 GET  /details             controllers.RestaurantController.getAllRestaurants()
-GET  /search/:name       controllers.RestaurantController.getRestaurantByName(name: String)
+GET  /search             controllers.RestaurantController.getRestaurantByName(name: String)
 
 
 # An example controller showing a sample home page

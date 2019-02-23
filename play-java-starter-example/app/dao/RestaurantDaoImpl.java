@@ -35,6 +35,11 @@ public class RestaurantDaoImpl implements RestaurantDao{
     }
 
     @Override
+    public Restaurant update(Restaurant restaurant) {
+        return null;
+    }
+
+    @Override
     public Collection<Restaurant> all() {
         TypedQuery<Restaurant> query = jpaApi.em().createQuery("SELECT r FROM Restaurant r", Restaurant.class);
         List<Restaurant> restaurants= query.getResultList();

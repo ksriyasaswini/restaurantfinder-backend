@@ -23,7 +23,7 @@ public class Module extends AbstractModule {
         bind(BookDao.class).to(BookDaoImpl.class);
         bind(RestaurantDao.class).to(RestaurantDaoImpl.class);
 
-
+        bind(ImageStore.class).to(ImageStoreImpl.class);
         //bind(BookDao.class).to(FakeBookDao.class);
         // Use the system clock as the default implementation of Clock
         bind(Clock.class).toInstance(Clock.systemDefaultZone());
