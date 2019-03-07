@@ -55,4 +55,12 @@ public class RestaurantDaoImpl implements RestaurantDao{
 
         return restaurants;
     }
+
+    @Override
+    public Collection<Restaurant> findRestaurantById(Integer id) {
+        TypedQuery<Restaurant> query = jpaApi.em().createQuery("SELECT r FROM Restaurant r where Id ="+id, Restaurant.class);
+        List<Restaurant> restaurants= query.getResultList();
+
+        return restaurants;
+    }
 }

@@ -41,10 +41,10 @@ public class ImagesController extends Controller {
         String imageId = imageStore.save(source);
 
         final String downloadUrl = routes.ImagesController.downloadImage(imageId).absoluteURL(request());
-
+        
         final ObjectNode result = Json.newObject();
-        result.put("image_url", downloadUrl);
-        //result.put("imageId", imageId);
+       // result.put("image_url", downloadUrl);
+        result.put("imageId", imageId);
 
         return ok(result);
     }

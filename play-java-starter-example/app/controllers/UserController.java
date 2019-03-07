@@ -103,12 +103,12 @@ public class UserController extends Controller {
 
 
     @Transactional
-    public Result signInUser(String username, String password) {
+    public Result signInUser() {
 
         final JsonNode json = request().body().asJson();
 
-        //final String username = json.get("username").asText();
-        // final String password = json.get("password").asText();
+        final String username = json.get("username").asText();
+         final String password = json.get("password").asText();
         if (null == password || null == username) {
             return badRequest("Missing mandatory parameters");
         }

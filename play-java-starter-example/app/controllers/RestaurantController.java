@@ -65,15 +65,29 @@ public class RestaurantController extends Controller {
         return ok(result);
     }
 
+    @Transactional
+    public Result getRestaurantById(Integer id) {
+
+        if (null == id) {
+            return badRequest("name must be provided");
+        }
+
+        final Collection<Restaurant> restaurants = restaurantDao.findRestaurantById(id);
+
+        final JsonNode result = Json.toJson(restaurants);
+
+        return ok(result);
+    }
+
 
     @Transactional
     public Result getAllRestaurants() {
 
-        Collection<Restaurant> restaurant = restaurantDao.all();
+        Collection<Restaurant> restaurants = restaurantDao.all();
 
-        final JsonNode result = Json.toJson(restaurant);
+        final JsonNode result = Json.toJson(restaurants);
 
-        return ok(result);
+       return ok(result);
     }
 
 }

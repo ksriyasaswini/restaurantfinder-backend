@@ -22,8 +22,11 @@ public class Module extends AbstractModule {
 
         bind(BookDao.class).to(BookDaoImpl.class);
         bind(RestaurantDao.class).to(RestaurantDaoImpl.class);
-
         bind(ImageStore.class).to(ImageStoreImpl.class);
+        bind(UserDao.class).to(UserDaoImpl.class);
+
+
+
         //bind(BookDao.class).to(FakeBookDao.class);
         // Use the system clock as the default implementation of Clock
         bind(Clock.class).toInstance(Clock.systemDefaultZone());
@@ -32,7 +35,7 @@ public class Module extends AbstractModule {
         bind(ApplicationTimer.class).asEagerSingleton();
         // Set AtomicCounter as the implementation for Counter.
         bind(Counter.class).to(AtomicCounter.class);
-        bind(UserDao.class).to(UserDaoImpl.class);
+
 
     }
 

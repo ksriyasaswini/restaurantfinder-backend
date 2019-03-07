@@ -3,6 +3,10 @@ package models;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 public class Restaurant {
@@ -28,13 +32,19 @@ public class Restaurant {
     @JsonProperty("workinghrs")
     private String WorkingHrs;
 
-    public Restaurant(Integer id, String name, String address, String phNo, String workingHrs) {
+        @Basic
+    @JsonProperty("urls")
+    private String[] urls;
+
+    public Restaurant(Integer id, String name, String address, String phNo, String workingHrs, String[] urls) {
         Id = id;
         Name = name;
         Address = address;
         PhNo = phNo;
         WorkingHrs = workingHrs;
+        this.urls = urls;
     }
+
 
     public Restaurant() {
     }
@@ -79,7 +89,8 @@ public class Restaurant {
         WorkingHrs = workingHrs;
     }
 
+    public String[] getUrls() {return urls;}
 
-
+    public void setUrls(String[] urls) { this.urls = urls; }
 
 }

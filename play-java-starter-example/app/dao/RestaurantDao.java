@@ -7,5 +7,6 @@ import java.util.Collection;
 public interface RestaurantDao extends Crud2DAO<Restaurant, Integer>{
 
     Collection<Restaurant> findRestaurantByName(String name);
+    Collection<Restaurant> findRestaurantById(Integer id);
 
 }

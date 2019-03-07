@@ -13,7 +13,7 @@ import java.util.UUID;
 public class ImageStoreImpl implements ImageStore {
 
     private final static Logger.ALogger LOGGER = Logger.of(ImageStoreImpl.class);
-    private static final Path STORAGE_ROOT = Paths.get("/Users/sriyasaswini/Desktop/Images/2");
+    private static final Path STORAGE_ROOT = Paths.get("/Users/sriyasaswini/Desktop/images/imagestore");
 
     public ImageStoreImpl() {
 
