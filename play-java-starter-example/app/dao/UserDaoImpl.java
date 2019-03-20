@@ -6,6 +6,7 @@ import play.db.jpa.JPAApi;
 import javax.inject.Inject;
 import javax.persistence.TypedQuery;
 import java.util.Collection;
+import java.util.Optional;
 
 public class UserDaoImpl implements UserDao {
 
@@ -29,6 +30,11 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
+    public Optional<UserDetails> read(Integer id) {
+        return Optional.empty();
+    }
+
+    @Override
     public Collection<UserDetails> all() {
         return null;
     }
@@ -37,8 +43,8 @@ public class UserDaoImpl implements UserDao {
     @Override
     public UserDetails findUserByName(String username) {
 
-        TypedQuery<UserDetails> query = jpaApi.em().createQuery("SELECT u from UserDetails u where username = '"+username+"'", UserDetails.class);
-        UserDetails existingUser = query.getSingleResult();
+        TypedQuery<UserDetails> query1 = jpaApi.em().createQuery("SELECT u from UserDetails u where username = '"+username+"'", UserDetails.class);
+        UserDetails existingUser = query1.getSingleResult();
 
         if(null == existingUser) {
             return null;
@@ -83,7 +89,10 @@ public class UserDaoImpl implements UserDao {
         return userDetails;
     }
 
-
+    @Override
+    public UserDetails delete(Integer id) {
+        return null;
+    }
 
 
 }

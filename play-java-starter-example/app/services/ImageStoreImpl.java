@@ -1,7 +1,8 @@
 package services;
 
-import controllers.ImagesController;
+import com.google.inject.Inject;
 import play.Logger;
+import play.db.jpa.JPAApi;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,10 +13,14 @@ import java.util.UUID;
 
 public class ImageStoreImpl implements ImageStore {
 
+    final JPAApi jpaApi;
+
     private final static Logger.ALogger LOGGER = Logger.of(ImageStoreImpl.class);
     private static final Path STORAGE_ROOT = Paths.get("/Users/sriyasaswini/Desktop/images/imagestore");
 
-    public ImageStoreImpl() {
+    @Inject
+    public ImageStoreImpl(JPAApi jpaApi) {
+        this.jpaApi = jpaApi;
 
         File rootDir = STORAGE_ROOT.toFile();
 

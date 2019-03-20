@@ -1,8 +1,10 @@
 package controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import dao.ImageDao;
 import dao.RestaurantDao;
 import dao.RestaurantDaoImpl;
+import models.Images;
 import models.Restaurant;
 import org.springframework.beans.factory.annotation.Autowired;
 import play.Logger;
@@ -21,10 +23,13 @@ public class RestaurantController extends Controller {
 
     @Autowired
     final RestaurantDao restaurantDao;
+    private ImageDao imageDao;
 
     @Inject
-    public RestaurantController(RestaurantDao restaurantDao) { this.restaurantDao = restaurantDao; }
-    //public UserController(UserDao userDao) { this.userDao = userDao; }
+    public RestaurantController(RestaurantDao restaurantDao, ImageDao imageDao) {
+        this.restaurantDao = restaurantDao;
+        this.imageDao = imageDao;
+    }
 
     @Transactional
     public Result createRestaurant() {
@@ -40,9 +45,17 @@ public class RestaurantController extends Controller {
             return badRequest("Name must be provided");
         }
 
+        final Restaurant newrestaurant = restaurantDao.create(restaurant);
 
-        restaurantDao.create(restaurant);
-        final JsonNode result = Json.toJson(restaurant);
+        for (String url : restaurant.getImageUrls()) {
+            final Images image = new Images(url);
+            image.setImageUrl(url);
+            image.setRestaurant(newrestaurant);
+            imageDao.create(image);
+        }
+
+
+        final JsonNode result = Json.toJson(newrestaurant);
         return ok(result);
     }
 
@@ -60,6 +73,12 @@ public class RestaurantController extends Controller {
 //        } else {
 //            return notFound();
 //        }
+
+        for(Restaurant restaurant_new: restaurants ){
+            String[] image_strings = imageDao.getImageById(restaurant_new.getId());
+            LOGGER.debug("img collection is "+ image_strings);
+            restaurant_new.setImageUrls(image_strings);
+        }
         final JsonNode result = Json.toJson(restaurants);
 
         return ok(result);
@@ -73,6 +92,11 @@ public class RestaurantController extends Controller {
         }
 
         final Collection<Restaurant> restaurants = restaurantDao.findRestaurantById(id);
+        for(Restaurant restaurant_new: restaurants ){
+            String[] image_strings = imageDao.getImageById(restaurant_new.getId());
+            LOGGER.debug("img collection is "+ image_strings);
+            restaurant_new.setImageUrls(image_strings);
+        }
 
         final JsonNode result = Json.toJson(restaurants);
 
@@ -84,6 +108,12 @@ public class RestaurantController extends Controller {
     public Result getAllRestaurants() {
 
         Collection<Restaurant> restaurants = restaurantDao.all();
+
+        for(Restaurant restaurant_new: restaurants ){
+            String[] image_strings = imageDao.getImageById(restaurant_new.getId());
+            LOGGER.debug("img collection is "+ image_strings);
+            restaurant_new.setImageUrls(image_strings);
+        }
 
         final JsonNode result = Json.toJson(restaurants);
 

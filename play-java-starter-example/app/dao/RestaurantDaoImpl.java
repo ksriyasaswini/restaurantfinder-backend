@@ -8,6 +8,7 @@ import javax.inject.Inject;
 import javax.persistence.TypedQuery;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 
 public class RestaurantDaoImpl implements RestaurantDao{
@@ -35,7 +36,40 @@ public class RestaurantDaoImpl implements RestaurantDao{
     }
 
     @Override
+    public Optional<Restaurant> read(Integer id) {
+        if(null == id) {
+            throw new IllegalArgumentException("Id must be provided");
+        }
+
+        final Restaurant restaurant = jpaApi.em().find(Restaurant.class, id);
+        return restaurant != null ? Optional.of(restaurant) : Optional.empty();
+    }
+
+    @Override
     public Restaurant update(Restaurant restaurant) {
+
+        if (null == restaurant) {
+            throw new IllegalArgumentException("Book must be provided");
+        }
+
+        if (null == restaurant.getId()) {
+            throw new IllegalArgumentException("Book id must be provided");
+        }
+
+        final Restaurant existingHotel = jpaApi.em().find(Restaurant.class, restaurant.getId());
+        if (null == existingHotel) {
+            return null;
+        }
+
+        existingHotel.setName(restaurant.getName());
+
+        jpaApi.em().persist(existingHotel);
+
+        return existingHotel;
+    }
+
+    @Override
+    public Restaurant delete(Integer id) {
         return null;
     }
 

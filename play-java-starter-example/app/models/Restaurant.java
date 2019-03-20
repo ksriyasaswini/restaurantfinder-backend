@@ -32,21 +32,20 @@ public class Restaurant {
     @JsonProperty("workinghrs")
     private String WorkingHrs;
 
-        @Basic
-    @JsonProperty("urls")
-    private String[] urls;
+    @Transient
+    @JsonProperty("imageUrls")
+    private String[] imageUrls;
 
-    public Restaurant(Integer id, String name, String address, String phNo, String workingHrs, String[] urls) {
+    public Restaurant() {
+    }
+
+    public Restaurant(Integer id, String name, String address, String phNo, String workingHrs, String[] imageUrls) {
         Id = id;
         Name = name;
         Address = address;
         PhNo = phNo;
         WorkingHrs = workingHrs;
-        this.urls = urls;
-    }
-
-
-    public Restaurant() {
+        this.imageUrls = imageUrls;
     }
 
     public Integer getId() {
@@ -89,8 +88,11 @@ public class Restaurant {
         WorkingHrs = workingHrs;
     }
 
-    public String[] getUrls() {return urls;}
+    public String[] getImageUrls() {
+        return imageUrls;
+    }
 
-    public void setUrls(String[] urls) { this.urls = urls; }
-
+    public void setImageUrls(String[] imageUrls) {
+        this.imageUrls = imageUrls;
+    }
 }

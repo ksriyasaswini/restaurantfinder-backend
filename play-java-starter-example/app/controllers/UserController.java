@@ -2,6 +2,7 @@ package controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.io.BaseEncoding;
+
 import dao.UserDao;
 import models.UserDetails;
 
@@ -12,8 +13,7 @@ import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Result;
 import java.lang.String;
-//import controllers.security.Authenticator;
-//import controllers.security.IsAdmin;
+
 import play.mvc.*;
 import javax.inject.Inject;
 import java.security.MessageDigest;
@@ -173,5 +173,6 @@ public class UserController extends Controller {
 
         return ok();
     }
+
 
 }
