@@ -42,30 +42,20 @@ public class ImageDaoImpl implements ImageDao{
             throw new IllegalArgumentException("id must be provided");
         }
 
-
-        Collection<Images> images = null;
-        String[] array;
-
-        List<String> img_list;
-
         try {
-            String queryString = "SELECT imageUrl FROM Images  WHERE restaurant.id = '" + id +"' ";
-            LOGGER.debug("queryString{} " + queryString);
-            TypedQuery<String> query = jpaApi.em().createQuery(queryString,String.class);
-            img_list=  query.getResultList();
-            array = img_list.toArray(new String[0]);
+            String queryString = "SELECT imageUrl FROM Images WHERE restaurant.id = '" + id +"' ";
+            LOGGER.debug("queryString {}", queryString);
+            TypedQuery<String> query = jpaApi.em().createQuery(queryString, String.class);
+            List<String> imageUrls =  query.getResultList();
 
-//            for(String url : img_list){
-//
-//            }
-            //img = Arrays.copyOf(img,img.length,String [].class);
+            LOGGER.debug("ImageURLs {}", imageUrls);
 
-
+            return imageUrls.toArray(new String[0]);
         }
-        catch(NoResultException nre){
+        catch(NoResultException nre) {
             throw new IllegalArgumentException("No image found corresponding to given home id");
         }
-        return array;
+
     }
 
     @Override

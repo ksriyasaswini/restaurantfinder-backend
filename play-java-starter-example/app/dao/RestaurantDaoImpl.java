@@ -1,7 +1,9 @@
 package dao;
 
+import controllers.RestaurantController;
 import models.Book;
 import models.Restaurant;
+import play.Logger;
 import play.db.jpa.JPAApi;
 
 import javax.inject.Inject;
@@ -13,6 +15,7 @@ import java.util.Optional;
 
 public class RestaurantDaoImpl implements RestaurantDao{
 
+    private final static Logger.ALogger LOGGER = Logger.of(RestaurantController.class);
     final JPAApi jpaApi;
 
     @Inject
@@ -90,11 +93,4 @@ public class RestaurantDaoImpl implements RestaurantDao{
         return restaurants;
     }
 
-    @Override
-    public Collection<Restaurant> findRestaurantById(Integer id) {
-        TypedQuery<Restaurant> query = jpaApi.em().createQuery("SELECT r FROM Restaurant r where Id ="+id, Restaurant.class);
-        List<Restaurant> restaurants= query.getResultList();
-
-        return restaurants;
-    }
 }

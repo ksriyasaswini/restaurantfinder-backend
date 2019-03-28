@@ -25,7 +25,7 @@ public class Module extends AbstractModule {
         bind(ImageStore.class).to(ImageStoreImpl.class);
         bind(UserDao.class).to(UserDaoImpl.class);
         bind(ImageDao.class).to(ImageDaoImpl.class);
-
+        bind(ReviewDao.class).to(ReviewDaoImpl.class);
 
 
         //bind(BookDao.class).to(FakeBookDao.class);

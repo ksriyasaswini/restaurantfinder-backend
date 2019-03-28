@@ -29,10 +29,14 @@ DELETE /images       controllers.ImagesController.deleteImage(id: String)
 
 
 POST /restaurants                    controllers.RestaurantController.createRestaurant()
-GET  /restaurants                    controllers.RestaurantController.getAllRestaurants()
 GET  /restaurants/search             controllers.RestaurantController.getRestaurantByName(name: String)
-GET  /restaurants/:id                controllers.RestaurantController.getRestaurantById(id: Integer)
+GET  /restaurants/id                controllers.RestaurantController.getRestaurantById(id: Integer)
+GET  /restaurants                    controllers.RestaurantController.getAllRestaurants()
 
+
+GET /review/rating controllers.ReviewController.findRatings(rid: Integer)
+#GET /review/reviews controllers.ReviewController.findReviews(rid: Integer)
+POST /review/create controllers.ReviewController.createReview()
 
 
 # An example controller showing a sample home page

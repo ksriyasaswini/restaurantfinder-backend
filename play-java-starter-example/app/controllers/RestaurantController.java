@@ -14,6 +14,7 @@ import play.mvc.Controller;
 import play.mvc.Result;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
 
@@ -87,18 +88,26 @@ public class RestaurantController extends Controller {
     @Transactional
     public Result getRestaurantById(Integer id) {
 
+        LOGGER.debug(("fhhfreufh"));
         if (null == id) {
             return badRequest("name must be provided");
         }
+        //LOGGER.debug("id{}",id.toString());
 
-        final Collection<Restaurant> restaurants = restaurantDao.findRestaurantById(id);
-        for(Restaurant restaurant_new: restaurants ){
-            String[] image_strings = imageDao.getImageById(restaurant_new.getId());
-            LOGGER.debug("img collection is "+ image_strings);
-            restaurant_new.setImageUrls(image_strings);
-        }
+        final Optional<Restaurant> restaurants = restaurantDao.read(id);
+        Collection<Restaurant> restaurantArrayList = new ArrayList<>();
+        restaurants.ifPresent(restaurantArrayList :: add);
+        LOGGER.debug("arraylist{}",restaurantArrayList);
 
-        final JsonNode result = Json.toJson(restaurants);
+
+            for (Restaurant restaurant_new : restaurantArrayList) {
+                String[] image_strings = imageDao.getImageById(restaurant_new.getId());
+                LOGGER.debug("img collection is " + image_strings);
+                restaurant_new.setImageUrls(image_strings);
+            }
+
+
+        final JsonNode result = Json.toJson(restaurantArrayList);
 
         return ok(result);
     }
