@@ -36,12 +36,20 @@ public class UserDetails {
     @Basic
     private String accessToken;
 
-    public UserDetails(Integer id, String username, String password, String passwordHash, String salt, Integer hashIteration) {
+    @Transient
+    @JsonIgnore
+    @JsonProperty("favourites")
+    private Integer favourites;
+
+    public UserDetails(Integer id, String username, String password, String passwordHash, String salt, Integer hashIterations, String accessToken, Integer favourites) {
         this.id = id;
         this.username = username;
         this.password = password;
+        this.passwordHash = passwordHash;
         this.salt = salt;
         this.hashIterations = hashIterations;
+        this.accessToken = accessToken;
+        this.favourites = favourites;
     }
 
     public UserDetails() {
@@ -96,4 +104,11 @@ public class UserDetails {
         this.accessToken = accessToken;
     }
 
+    public Integer getFavourites() {
+        return favourites;
+    }
+
+    public void setFavourites(Integer favourites) {
+        this.favourites = favourites;
+    }
 }

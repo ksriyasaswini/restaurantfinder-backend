@@ -1,5 +1,6 @@
 package models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.*;
@@ -33,18 +34,25 @@ public class Restaurant {
     private String WorkingHrs;
 
     @Transient
+    @JsonIgnore
+    @JsonProperty("menuUrls")
+    private String[] menuUrls;
+
+    @Transient
+    @JsonIgnore
     @JsonProperty("imageUrls")
     private String[] imageUrls;
 
     public Restaurant() {
     }
 
-    public Restaurant(Integer id, String name, String address, String phNo, String workingHrs, String[] imageUrls) {
+    public Restaurant(Integer id, String name, String address, String phNo, String workingHrs, String[] menuUrls, String[] imageUrls) {
         Id = id;
         Name = name;
         Address = address;
         PhNo = phNo;
         WorkingHrs = workingHrs;
+        this.menuUrls = menuUrls;
         this.imageUrls = imageUrls;
     }
 
@@ -86,6 +94,14 @@ public class Restaurant {
 
     public void setWorkingHrs(String workingHrs) {
         WorkingHrs = workingHrs;
+    }
+
+    public String[] getMenuUrls() {
+        return menuUrls;
+    }
+
+    public void setMenuUrls(String[] menuUrls) {
+        this.menuUrls = menuUrls;
     }
 
     public String[] getImageUrls() {

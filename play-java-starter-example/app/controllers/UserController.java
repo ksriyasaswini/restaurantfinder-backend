@@ -3,11 +3,16 @@ package controllers;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.io.BaseEncoding;
 
-import dao.UserDao;
+import dao.*;
+import controllers.RestaurantController;
+import io.jsonwebtoken.impl.crypto.MacProvider;
+import models.Favourites;
+import models.Restaurant;
 import models.UserDetails;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import play.Logger;
+import play.db.jpa.JPAApi;
 import play.db.jpa.Transactional;
 import play.libs.Json;
 import play.mvc.Controller;
@@ -16,20 +21,40 @@ import java.lang.String;
 
 import play.mvc.*;
 import javax.inject.Inject;
+import javax.persistence.TypedQuery;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Random;
+import java.util.*;
 
 public class UserController extends Controller {
 
     private final static Logger.ALogger LOGGER = Logger.of(UserController.class);
     private final static int HASH_ITERATIONS = 100;
 
+
+    RestaurantController restaurantController;
+    @Inject
+    public UserController(JPAApi jpaApi, UserDao userDao, FavouritesDao favouritesDao, RestaurantDao restaurantDao,ImageDao imageDao, MenuDao menuDao) {
+        this.jpaApi = jpaApi;
+        this.userDao = userDao;
+        this.favouritesDao = favouritesDao;
+        this.restaurantDao = restaurantDao;
+        this.imageDao = imageDao;
+        this.menuDao = menuDao;
+    }
+
+    final JPAApi jpaApi;
+
+
+
+
     @Autowired
     final UserDao userDao;
+    public ImageDao imageDao;
+    private FavouritesDao favouritesDao;
+    private RestaurantDao restaurantDao;
+    private MenuDao menuDao;
 
-    @Inject
-    public UserController(UserDao userDao) { this.userDao = userDao; }
 
     @Transactional
     public Result createUserDetails() {
@@ -62,6 +87,38 @@ public class UserController extends Controller {
 
         return ok(result);
         //return null;
+    }
+
+    @Transactional
+    public Result updateUserDetails() {
+
+
+        final JsonNode json = request().body().asJson();
+
+        final Favourites favourites = Json.fromJson(json, Favourites.class);
+        final String accessToken = json.get("Token").asText();
+        final Integer fav=json.get("favourites").asInt();
+        LOGGER.debug(accessToken);
+        final UserDetails userDetails=  userDao.findUserByAuthToken(accessToken);
+
+            favourites.setFavres(fav);
+            favourites.setUser(userDetails);
+            LOGGER.debug("user details {}",userDetails);
+            LOGGER.debug("fav {}",favourites.getFavres());
+            LOGGER.debug("id {}",fav);
+            final Optional<Restaurant> restaurants = restaurantDao.read(fav);
+            if(!restaurants.isPresent()) {
+                return  badRequest("Restaurant does not exists");
+            }
+
+
+            favourites.setRestaurant(restaurants.get());
+            favouritesDao.create(favourites);
+
+
+        final JsonNode result = Json.toJson(favourites);
+
+        return ok(result);
     }
 
         private String generateSalt() {
@@ -154,6 +211,80 @@ public class UserController extends Controller {
     }
 
     @Transactional
+    public Result UserProfile(String Token) {
+
+
+        Optional<Restaurant> restaurants=null;
+        Collection<Restaurant> restaurantArrayList = new ArrayList<>();
+
+        if (null == Token ) {
+
+            return badRequest("Missing mandatory parameters");
+        }
+        final UserDetails user = userDao.findUserByAuthToken(Token);
+        Integer uid= user.getId();
+
+        Integer[] favs= favouritesDao.FavouriteById(uid);
+        LOGGER.debug("favs {}",favs[2]);
+
+
+        for(int i=0;i<favs.length;i++) {
+            restaurants = restaurantDao.read(favs[i]);
+
+            restaurants.ifPresent(restaurantArrayList :: add);
+            LOGGER.debug("arraylist{}",restaurantArrayList);
+
+
+            for (Restaurant restaurant_new : restaurantArrayList) {
+
+                String[] image_strings = imageDao.getImageById(restaurant_new.getId());
+                LOGGER.debug("img collection is " + image_strings);
+                restaurant_new.setImageUrls(image_strings);
+            }
+
+            for(Restaurant restaurant_new: restaurantArrayList ){
+                String[] image_strings = menuDao.getMenuById(restaurant_new.getId());
+                LOGGER.debug("img collection is "+ image_strings);
+                restaurant_new.setMenuUrls(image_strings);
+            }
+
+
+        }
+
+      Map<String, Object> map = new HashMap<>();
+       map.put("user", user);
+       map.put("favorites", restaurantArrayList);
+
+        final JsonNode result = Json.toJson(map.entrySet().toArray());
+
+        return ok(result);
+    }
+
+
+    @Transactional
+    public Result removeFavourite(Integer id) {
+
+        if (null == id ) {
+
+            return badRequest("Missing mandatory parameters");
+        }
+
+        else {
+            TypedQuery<Favourites> query = jpaApi.em().createQuery("SELECT f from Favourites f where favres = '"+id+"'", Favourites.class);
+            Favourites existingfavourites = query.getSingleResult();
+            Integer fid= existingfavourites.getFid();
+
+
+            final Favourites favourites = favouritesDao.delete(fid);
+
+            final JsonNode result = Json.toJson(favourites);
+            return ok(result);
+        }
+
+    }
+
+
+    @Transactional
     public Result signOutUser(String Token) {
 
         if (null == Token ) {
@@ -174,5 +305,5 @@ public class UserController extends Controller {
         return ok();
     }
 
-
 }
+

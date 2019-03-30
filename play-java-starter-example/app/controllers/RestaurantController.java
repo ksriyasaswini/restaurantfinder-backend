@@ -2,9 +2,10 @@ package controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import dao.ImageDao;
+import dao.MenuDao;
 import dao.RestaurantDao;
-import dao.RestaurantDaoImpl;
 import models.Images;
+import models.Menu;
 import models.Restaurant;
 import org.springframework.beans.factory.annotation.Autowired;
 import play.Logger;
@@ -25,12 +26,15 @@ public class RestaurantController extends Controller {
     @Autowired
     final RestaurantDao restaurantDao;
     private ImageDao imageDao;
+    private MenuDao menuDao;
 
-    @Inject
-    public RestaurantController(RestaurantDao restaurantDao, ImageDao imageDao) {
+@Inject
+    public RestaurantController(RestaurantDao restaurantDao, ImageDao imageDao, MenuDao menuDao) {
         this.restaurantDao = restaurantDao;
         this.imageDao = imageDao;
+        this.menuDao = menuDao;
     }
+
 
     @Transactional
     public Result createRestaurant() {
@@ -47,6 +51,13 @@ public class RestaurantController extends Controller {
         }
 
         final Restaurant newrestaurant = restaurantDao.create(restaurant);
+
+        for (String url : restaurant.getMenuUrls()) {
+            final Menu menu = new Menu(url);
+            menu.setImageUrl(url);
+            menu.setRestaurant(newrestaurant);
+            menuDao.create(menu);
+        }
 
         for (String url : restaurant.getImageUrls()) {
             final Images image = new Images(url);
@@ -106,6 +117,11 @@ public class RestaurantController extends Controller {
                 restaurant_new.setImageUrls(image_strings);
             }
 
+        for(Restaurant restaurant_new: restaurantArrayList ){
+            String[] image_strings = menuDao.getMenuById(restaurant_new.getId());
+            LOGGER.debug("img collection is "+ image_strings);
+            restaurant_new.setMenuUrls(image_strings);
+        }
 
         final JsonNode result = Json.toJson(restaurantArrayList);
 
@@ -122,6 +138,12 @@ public class RestaurantController extends Controller {
             String[] image_strings = imageDao.getImageById(restaurant_new.getId());
             LOGGER.debug("img collection is "+ image_strings);
             restaurant_new.setImageUrls(image_strings);
+        }
+
+        for(Restaurant restaurant_new: restaurants ){
+            String[] image_strings = menuDao.getMenuById(restaurant_new.getId());
+            LOGGER.debug("img collection is "+ image_strings);
+            restaurant_new.setMenuUrls(image_strings);
         }
 
         final JsonNode result = Json.toJson(restaurants);

@@ -26,7 +26,9 @@ public class Module extends AbstractModule {
         bind(UserDao.class).to(UserDaoImpl.class);
         bind(ImageDao.class).to(ImageDaoImpl.class);
         bind(ReviewDao.class).to(ReviewDaoImpl.class);
+        bind(MenuDao.class).to(MenuDaoImpl.class);
 
+        bind(FavouritesDao.class).to(FavouritesDaoImpl.class);
 
         //bind(BookDao.class).to(FakeBookDao.class);
         // Use the system clock as the default implementation of Clock
