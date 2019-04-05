@@ -22,26 +22,31 @@ PUT /signOut              controllers.UserController.signOutUser(token: String)
 PUT /favourite              controllers.UserController.updateUserDetails()
 GET /profile               controllers.UserController.UserProfile(Token: String)
 
-DELETE /favourite           controllers.UserController.removeFavourite(id: Integer)
+GET /avg controllers.RestaurantController.avgRatings(rid: Integer)
+
+DELETE /favourite           controllers.UserController.removeFavourite(id: Integer, AccessToken:String)
 #DELETE  /login/:id          controllers.UserController.deleteValuesById(id: Integer)
 #GET  /login              controllers.UserController.getAllValues()
 #GET  /login/:id          controllers.UserController.getValuesById(id: Integer)
 
+GET  /searchL           controllers.RestaurantController.getRestaurantByLocation(latitude: Double,longitude: Double)
+
 
 POST /images             controllers.ImagesController.uploadImage()
-GET /images         controllers.ImagesController.downloadImage(id: String)
-DELETE /images       controllers.ImagesController.deleteImage(id: String)
+GET /images             controllers.ImagesController.downloadImage(id: String)
+DELETE /images          controllers.ImagesController.deleteImage(id: String)
 
 
 POST /restaurants                    controllers.RestaurantController.createRestaurant()
 GET  /restaurants/search             controllers.RestaurantController.getRestaurantByName(name: String)
 GET  /restaurants/id                controllers.RestaurantController.getRestaurantById(id: Integer)
 GET  /restaurants                    controllers.RestaurantController.getAllRestaurants()
+PUT /restaurants/filters            controllers.RestaurantController.getFilteredRestaurants()
 
 
-GET /review/rating controllers.ReviewController.findRatings(rid: Integer)
-#GET /review/reviews controllers.ReviewController.findReviews(rid: Integer)
-POST /review/create controllers.ReviewController.createReview()
+GET /review/rating          controllers.ReviewController.findRatings(rid: Integer)
+#GET /review/reviews        controllers.ReviewController.findReviews(rid: Integer)
+POST /review/create         controllers.ReviewController.createReview()
 
 
 # An example controller showing a sample home page

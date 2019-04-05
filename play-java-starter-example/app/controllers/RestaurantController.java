@@ -17,6 +17,7 @@ import play.mvc.Result;
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 public class RestaurantController extends Controller {
@@ -72,6 +73,33 @@ public class RestaurantController extends Controller {
     }
 
     @Transactional
+    public Result getRestaurantByLocation (Double lat,Double lng) {
+
+        if (null == lat){
+            return badRequest("latitude must be provided");
+        }
+
+        final Collection<Restaurant> restaurants = restaurantDao.findRestaurantByLocation(lat, lng);
+
+        for(Restaurant restaurant_new: restaurants ){
+            String[] image_strings = imageDao.getImageById(restaurant_new.getId());
+            LOGGER.debug("img collection is "+ image_strings);
+            restaurant_new.setImageUrls(image_strings);
+        }
+
+        for(Restaurant restaurant_new: restaurants ){
+            String[] image_strings = menuDao.getMenuById(restaurant_new.getId());
+            LOGGER.debug("img collection is "+ image_strings);
+            restaurant_new.setMenuUrls(image_strings);
+        }
+
+
+        final JsonNode result = Json.toJson(restaurants);
+
+        return ok(result);
+    }
+
+    @Transactional
     public Result getRestaurantByName(String name) {
 
         if (null == name) {
@@ -123,9 +151,98 @@ public class RestaurantController extends Controller {
             restaurant_new.setMenuUrls(image_strings);
         }
 
+
         final JsonNode result = Json.toJson(restaurantArrayList);
 
         return ok(result);
+    }
+    @Transactional
+    public Result getFilteredRestaurants() {
+
+        final JsonNode json = request().body().asJson();
+        final Restaurant restaurant = Json.fromJson(json, Restaurant.class);
+        String type = restaurant.getType();
+        if(type == "")
+            type = "Veg/Non-Veg";
+        Integer minCost=0;
+        Integer maxCost=0;
+        Integer fsort=0;
+        String[] cuisines = restaurant.getCuisines();
+        StringBuffer finalCuisines = new StringBuffer(cuisines.length);
+
+        for(int i=0;i<cuisines.length;i++)
+        {
+
+            finalCuisines.append(cuisines[0]+"%");
+        }
+
+       maxCost = restaurant.getCost();
+
+        if(maxCost == 0)
+            maxCost=3000;
+
+
+
+        String sort = (json.get("sort").asText());
+        if(sort == "")
+            fsort = 0;
+        else
+          fsort = Integer.parseInt(sort);
+
+        String time = json.get("open").asText();
+
+//        String workinghrs = restaurant.getWorkinghrs();
+//        LOGGER.debug("workinghrs{}",workinghrs);
+
+
+        LOGGER.debug("type {}", type);
+        LOGGER.debug("mincost {}",minCost);
+        LOGGER.debug("MaxCost {}",maxCost);
+        LOGGER.debug("sort {}" ,sort);
+        LOGGER.debug("cuisines {}",finalCuisines);
+
+        LOGGER.debug("len{}",cuisines.length);
+
+        final Collection<Restaurant> restaurants = restaurantDao.findRestaurantByFilters(type, minCost, maxCost, finalCuisines.toString(),fsort,time );
+
+
+//        Collection<Restaurant> restaurantArrayList = new ArrayList<>();
+//        restaurants.ifPresent(restaurantArrayList :: add);
+
+        for(Restaurant restaurant_new: restaurants ){
+            String[] image_strings = imageDao.getImageById(restaurant_new.getId());
+            LOGGER.debug("img collection is "+ image_strings);
+            restaurant_new.setImageUrls(image_strings);
+        }
+
+        for(Restaurant restaurant_new: restaurants ){
+            String[] image_strings = menuDao.getMenuById(restaurant_new.getId());
+            LOGGER.debug("img collection is "+ image_strings);
+            restaurant_new.setMenuUrls(image_strings);
+        }
+
+
+        final JsonNode result = Json.toJson(restaurants);
+
+        return ok(result);
+    }
+
+
+    @Transactional
+    public Result avgRatings(Integer rid) {
+
+        if(null == rid)
+            return badRequest("rid must be provided");
+
+        Double avg = restaurantDao.averageRating(rid);
+
+        if(avg==null)
+            return badRequest("avg is null");
+
+        final JsonNode result = Json.toJson(avg);
+
+        return ok(result);
+
     }
 
 
@@ -150,5 +267,6 @@ public class RestaurantController extends Controller {
 
        return ok(result);
     }
+
 
 }

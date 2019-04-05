@@ -225,7 +225,7 @@ public class UserController extends Controller {
         Integer uid= user.getId();
 
         Integer[] favs= favouritesDao.FavouriteById(uid);
-        LOGGER.debug("favs {}",favs[2]);
+
 
 
         for(int i=0;i<favs.length;i++) {
@@ -262,15 +262,17 @@ public class UserController extends Controller {
 
 
     @Transactional
-    public Result removeFavourite(Integer id) {
+    public Result removeFavourite(Integer id, String AccessToken) {
 
-        if (null == id ) {
+        if (null == id || AccessToken == null ) {
 
             return badRequest("Missing mandatory parameters");
         }
 
         else {
-            TypedQuery<Favourites> query = jpaApi.em().createQuery("SELECT f from Favourites f where favres = '"+id+"'", Favourites.class);
+            final UserDetails user = userDao.findUserByAuthToken(AccessToken);
+            Integer uid= user.getId();
+            TypedQuery<Favourites> query = jpaApi.em().createQuery("SELECT f from Favourites f where favres = '"+id+"' and user_id='"+uid+"' ", Favourites.class);
             Favourites existingfavourites = query.getSingleResult();
             Integer fid= existingfavourites.getFid();
 

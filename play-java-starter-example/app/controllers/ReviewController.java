@@ -25,11 +25,13 @@ public class ReviewController extends Controller {
 
     final ReviewDao reviewDao;
     final RestaurantDao restaurantDao;
+    final UserDao userDao;
 
     @Inject
-    public ReviewController(ReviewDao reviewDao, RestaurantDao restaurantDao) {
+    public ReviewController(ReviewDao reviewDao, RestaurantDao restaurantDao,UserDao userDao) {
         this.reviewDao = reviewDao;
         this.restaurantDao = restaurantDao;
+        this.userDao = userDao;
     }
 
     @Transactional
@@ -42,22 +44,31 @@ public class ReviewController extends Controller {
         LOGGER.debug("Review name = " + review.getRevId());
         LOGGER.error("This is an error");
 
+
+
         final Integer restaurantId = json.get("restaurant_Id").asInt();
         final Optional<Restaurant> restaurant =  restaurantDao.read(restaurantId);
+        final String Token = json.get("user_id").asText();
+        final UserDetails user = userDao.findUserByAuthToken(Token);
 
         if (!restaurant.isPresent()) {
             return badRequest();
         }
 
         review.setRestaurant(restaurant.get());
+        review.setUser(user);
+        reviewDao.create(review);
+        final JsonNode result = Json.toJson(review);
 
+        Restaurant rest = restaurant.get();
+        LOGGER.debug("rid{}",restaurantId);
+        rest.setAvgRating(restaurantDao.averageRating(restaurantId));
         if (null == review.getReview()) {
             return badRequest("Review must be provided");
         }
 
 
-        reviewDao.create(review);
-        final JsonNode result = Json.toJson(review);
+
         return ok(result);
 
 

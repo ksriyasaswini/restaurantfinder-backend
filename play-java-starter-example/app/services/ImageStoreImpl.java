@@ -16,7 +16,7 @@ public class ImageStoreImpl implements ImageStore {
     final JPAApi jpaApi;
 
     private final static Logger.ALogger LOGGER = Logger.of(ImageStoreImpl.class);
-    private static final Path STORAGE_ROOT = Paths.get("/Users/sriyasaswini/Desktop/images/imagestore");
+    private static final Path STORAGE_ROOT = Paths.get("/Users/sriyasaswini/Desktop/images/final");
 
     @Inject
     public ImageStoreImpl(JPAApi jpaApi) {
