@@ -163,17 +163,20 @@ public class RestaurantController extends Controller {
         final Restaurant restaurant = Json.fromJson(json, Restaurant.class);
         String type = restaurant.getType();
         if(type == "")
-            type = "Veg/Non-Veg";
+            type = " veg / non-veg";
+
         Integer minCost=0;
         Integer maxCost=0;
         Integer fsort=0;
         String[] cuisines = restaurant.getCuisines();
         StringBuffer finalCuisines = new StringBuffer(cuisines.length);
 
+
         for(int i=0;i<cuisines.length;i++)
         {
 
-            finalCuisines.append(cuisines[0]+"%");
+            if(finalCuisines.indexOf(cuisines[i]) == -1)
+              finalCuisines.append(cuisines[i]+"%");
         }
 
        maxCost = restaurant.getCost();
@@ -191,6 +194,7 @@ public class RestaurantController extends Controller {
 
         String time = json.get("open").asText();
 
+
 //        String workinghrs = restaurant.getWorkinghrs();
 //        LOGGER.debug("workinghrs{}",workinghrs);
 
@@ -200,6 +204,7 @@ public class RestaurantController extends Controller {
         LOGGER.debug("MaxCost {}",maxCost);
         LOGGER.debug("sort {}" ,sort);
         LOGGER.debug("cuisines {}",finalCuisines);
+        LOGGER.debug("time{}",time);
 
         LOGGER.debug("len{}",cuisines.length);
 

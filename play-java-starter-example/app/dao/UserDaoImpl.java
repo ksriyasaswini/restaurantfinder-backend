@@ -31,7 +31,13 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public Optional<UserDetails> read(Integer id) {
-        return Optional.empty();
+
+        if(null == id) {
+            throw new IllegalArgumentException("Id must be provided");
+        }
+
+        final UserDetails user = jpaApi.em().find(UserDetails.class, id);
+        return user != null ? Optional.of(user) : Optional.empty();
     }
 
     @Override
@@ -65,6 +71,21 @@ public class UserDaoImpl implements UserDao {
         }
         return userDetails;
     }
+
+    @Override
+    public Optional<UserDetails> readbyname(UserDetails userDetails) {
+         UserDetails userDetails_final = null;
+        if (null == userDetails) {
+            throw new IllegalArgumentException("Id must be provided");
+        }
+
+
+             userDetails_final = jpaApi.em().find(UserDetails.class, userDetails.getId());
+            return userDetails_final != null ? Optional.of(userDetails_final) : Optional.empty();
+
+
+    }
+
 
     public UserDetails update(UserDetails userDetails) {
 

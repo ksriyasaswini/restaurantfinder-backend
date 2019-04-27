@@ -29,9 +29,17 @@ public class Restaurant {
     @JsonProperty("phno")
     private String phno;
 
+//    @Basic
+//    @JsonProperty("workinghrs")
+//    private String workinghrs;
+
     @Basic
-    @JsonProperty("workinghrs")
-    private String workinghrs;
+    @JsonProperty("fromTimings")
+    private  String fromTimings;
+
+    @Basic
+    @JsonProperty("toTimings")
+    private String toTimings;
 
     @Basic
     @JsonProperty("cost")
@@ -80,12 +88,14 @@ public class Restaurant {
     }
 
 
-    public Restaurant(Integer id, String name, String address, String phno, String workinghrs, Integer cost, String[] cuisines, String[] featured_in, String type, Double latitude, Double longitude, Double avgRating, String[] menuUrls, String[] imageUrls) {
+    public Restaurant(Integer id, String name, String address, String phno, String fromTimings, String toTimings, Integer cost, String[] cuisines, String[] featured_in, String type, Double latitude, Double longitude, Double avgRating, String[] menuUrls, String[] imageUrls) {
         Id = id;
         this.name = name;
         this.address = address;
         this.phno = phno;
-        this.workinghrs = workinghrs;
+      //  this.workinghrs = workinghrs;
+        this.fromTimings = fromTimings;
+        this.toTimings = toTimings;
         this.cost = cost;
         this.cuisines = cuisines;
         this.featured_in = featured_in;
@@ -129,13 +139,13 @@ public class Restaurant {
         this.phno = phno;
     }
 
-    public String getWorkinghrs() {
-        return workinghrs;
-    }
-
-    public void setWorkinghrs(String workinghrs) {
-        this.workinghrs = workinghrs;
-    }
+//    public String getWorkinghrs() {
+//        return workinghrs;
+//    }
+//
+//    public void setWorkinghrs(String workinghrs) {
+//        this.workinghrs = workinghrs;
+//    }
 
     public Integer getCost() {
         return cost;
@@ -207,5 +217,21 @@ public class Restaurant {
 
     public void setAvgRating(Double avgRating) {
         this.avgRating = avgRating;
+    }
+
+    public String getFromTimings() {
+        return fromTimings;
+    }
+
+    public void setFromTimings(String fromTimings) {
+        this.fromTimings = fromTimings;
+    }
+
+    public String getToTimings() {
+        return toTimings;
+    }
+
+    public void setToTimings(String toTimings) {
+        this.toTimings = toTimings;
     }
 }

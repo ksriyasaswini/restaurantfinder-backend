@@ -73,6 +73,10 @@ public class UserController extends Controller {
             return badRequest("Missing mandatory parameters");
         }
 
+//        if(userDao.readbyname(userDetails).isPresent()){
+//            return badRequest("user taken!");
+//        }
+
         final String salt = generateSalt();
 
         final String hash = generateHash(salt, password, HASH_ITERATIONS);

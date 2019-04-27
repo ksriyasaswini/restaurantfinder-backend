@@ -90,7 +90,7 @@ public class RestaurantDaoImpl implements RestaurantDao{
 
     @Override
     public Collection<Restaurant> findRestaurantByName(String name) {
-        TypedQuery<Restaurant> query = jpaApi.em().createQuery("SELECT r FROM Restaurant r where Address LIKE '%"+name+"%' or cuisines LIKE '%"+name+"%' or name LIKE '%"+name+"%' or featured_in LIKE '%"+name+"%'", Restaurant.class);
+        TypedQuery<Restaurant> query = jpaApi.em().createQuery("SELECT r FROM Restaurant r where Address LIKE '%"+name.toLowerCase()+"%' or cuisines LIKE '%"+name+"%' or name LIKE '%"+name.toLowerCase()+"%' or featured_in LIKE '%"+name.toLowerCase()+"%'", Restaurant.class);
         List<Restaurant> restaurants= query.getResultList();
 
         return restaurants;
@@ -128,30 +128,52 @@ public class RestaurantDaoImpl implements RestaurantDao{
 
 
     @Override
-    public Collection<Restaurant> findRestaurantByFilters(String type, Integer minCost, Integer maxCost, String cuisines, Integer Sort,String Open) {
+    public Collection<Restaurant> findRestaurantByFilters(String type, Integer minCost, Integer maxCost, String cuisine, Integer Sort,String time) {
 
 
-        if(Sort==1) {
+        if(time == "Open Only") {
+            LOGGER.debug("open/close");
 
-            TypedQuery<Restaurant> query = jpaApi.em().createQuery("SELECT r FROM Restaurant r where type = '" + type + "' and cost <" + maxCost + " and cuisines LIKE '%" + cuisines + "%' ORDER BY avgRating desc", Restaurant.class);
 
-            restaurants = query.getResultList();
+            if (Sort == 1) {
+
+                TypedQuery<Restaurant> query = jpaApi.em().createQuery("SELECT r FROM Restaurant r where type = '" + type + "' and cost <" + maxCost + " and cuisines LIKE '%" + cuisine + "%' ORDER BY avgRating desc and TIMEDIFF(fromTimings, CURRENT_TIME)<0 and TIMEDIFF(CURRENT_TIME, toTimings)<0", Restaurant.class);
+
+                restaurants = query.getResultList();
+
+            } else if (Sort == 2) {
+                TypedQuery<Restaurant> query = jpaApi.em().createQuery("SELECT r FROM Restaurant r where type = '" + type + "' and cost between " + minCost + "and " + maxCost + " and cuisines LIKE '%" + cuisine + "%' ORDER BY cost desc and TIMEDIFF(fromTimings, CURRENT_TIME)<0 and TIMEDIFF(CURRENT_TIME, toTimings)<0", Restaurant.class);
+                restaurants = query.getResultList();
+            } else if (Sort == 3) {
+                TypedQuery<Restaurant> query = jpaApi.em().createQuery("SELECT r FROM Restaurant r where type = '" + type + "' and cost between " + minCost + "and " + maxCost + " and cuisines LIKE '%" + cuisine + "%' ORDER BY cost asc and TIMEDIFF(fromTimings, CURRENT_TIME)<0 and TIMEDIFF(CURRENT_TIME, toTimings)<0", Restaurant.class);
+                restaurants = query.getResultList();
+            } else {
+                TypedQuery<Restaurant> query = jpaApi.em().createQuery("SELECT r FROM Restaurant r where type = '" + type + "' and cost between " + minCost + "and " + maxCost + " and cuisines LIKE '%" + cuisine + "%' and TIMEDIFF(fromTimings, CURRENT_TIME)<0 and TIMEDIFF(CURRENT_TIME, toTimings)<0", Restaurant.class);
+                restaurants = query.getResultList();
+            }
+
+        }
+        else
+        {
+            if (Sort == 1) {
+
+                TypedQuery<Restaurant> query = jpaApi.em().createQuery("SELECT r FROM Restaurant r where type = '" + type + "' and cost <" + maxCost + " and cuisines LIKE '%" + cuisine + "%' ORDER BY avgRating desc", Restaurant.class);
+
+                restaurants = query.getResultList();
+
+            } else if (Sort == 2) {
+                TypedQuery<Restaurant> query = jpaApi.em().createQuery("SELECT r FROM Restaurant r where type = '" + type + "' and cost between " + minCost + "and " + maxCost + " and cuisines LIKE '%" + cuisine + "%' ORDER BY cost desc", Restaurant.class);
+                restaurants = query.getResultList();
+            } else if (Sort == 3) {
+                TypedQuery<Restaurant> query = jpaApi.em().createQuery("SELECT r FROM Restaurant r where type = '" + type + "' and cost between " + minCost + "and " + maxCost + " and cuisines LIKE '%" + cuisine + "%' ORDER BY cost asc", Restaurant.class);
+                restaurants = query.getResultList();
+            } else {
+                TypedQuery<Restaurant> query = jpaApi.em().createQuery("SELECT r FROM Restaurant r where type = '" + type + "' and cost between " + minCost + "and " + maxCost + " and cuisines LIKE '%" + cuisine + "%'", Restaurant.class);
+                restaurants = query.getResultList();
+            }
 
         }
 
-        else if(Sort ==2 ) {
-            TypedQuery<Restaurant> query = jpaApi.em().createQuery("SELECT r FROM Restaurant r where type = '" + type + "' and cost between " + minCost + "and " + maxCost + " and cuisines LIKE '%" + cuisines + "%' ORDER BY cost desc", Restaurant.class);
-            restaurants = query.getResultList();
-        }
-
-        else if(Sort ==3 ) {
-            TypedQuery<Restaurant> query = jpaApi.em().createQuery("SELECT r FROM Restaurant r where type = '" + type + "' and cost between " + minCost + "and " + maxCost + " and cuisines LIKE '%" + cuisines + "%' ORDER BY cost asc", Restaurant.class);
-            restaurants = query.getResultList();
-        }
-        else {
-            TypedQuery<Restaurant> query = jpaApi.em().createQuery("SELECT r FROM Restaurant r where type = '" + type + "' and cost between " + minCost + "and " + maxCost + " and cuisines LIKE '%" + cuisines + "%'", Restaurant.class);
-            restaurants = query.getResultList();
-        }
 
 
 
